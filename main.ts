@@ -9,12 +9,20 @@ while (true) {
   const input = prompt(`Player ${player}:`) || "";
   const col = Number.parseInt(input);
   const row = board.makeMove(player, col);
-  board.output();
-  console.log();
-  const winner = board.winner(player, row, col);
-  if (winner != Player.Nobody) {
-    console.log(`Player ${player}: A winner is you!`);
-    break;
-  }
-  player = player == Player.PlayerX ? Player.PlayerO : Player.PlayerX;
+
+if (row === -1) {
+  console.log("Ungültiger Zug (Spalte voll oder ungültige Spalte). Bitte erneut versuchen.");
+  continue; // gleicher Spieler nochmal
+}
+
+board.output();
+console.log();
+
+const winner = board.winner(player, row, col);
+if (winner != Player.Nobody) {
+  console.log(`Player ${player}: A winner is you!`);
+  break;
+}
+player = player == Player.PlayerX ? Player.PlayerO : Player.PlayerX;
+
 }

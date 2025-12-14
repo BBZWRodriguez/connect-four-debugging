@@ -37,30 +37,41 @@ export class Board {
   }
 
   public makeMove(player: Player, col: number): number {
-    for (let r = this.fields.length - 1; r >= 0; r--) {
-      if (this.fields[r][col] == Player.Nobody) {
-        this.fields[r][col] = player;
-        return r;
-      }
-    }
+  // Ungültige Spalten behandeln wie ungültigen Zug
+  if (col < 0 || col >= COLS) {
     return -1;
   }
 
+  for (let r = this.fields.length - 1; r >= 0; r--) {
+    if (this.fields[r][col] == Player.Nobody) {
+      this.fields[r][col] = player;
+      return r;
+    }
+  }
+  // Spalte ist voll
+  return -1;
+}
+
+
   public winner(player: Player, row: number, col: number): Player {
-    const horizontal = this.horizontalWinner(player, row);
-    if (horizontal != Player.Nobody) {
-      return horizontal;
-    }
-    const vertical = this.verticalWinner(player, col);
-    if (vertical != Player.Nobody) {
-      return vertical;
-    }
-    const diagonal = this.diagonalWinner(player, row, col);
-    if (diagonal != Player.Nobody) {
-      return diagonal;
-    }
+  // Wenn der letzte Zug ungültig war (z.B. Spalte voll -> row = -1),
+  // darf NICHT ins Board zugegriffen werden.
+  if (row < 0 || row >= ROWS || col < 0 || col >= COLS) {
     return Player.Nobody;
   }
+
+  const horizontal = this.horizontalWinner(player, row);
+  if (horizontal != Player.Nobody) return horizontal;
+
+  const vertical = this.verticalWinner(player, col);
+  if (vertical != Player.Nobody) return vertical;
+
+  const diagonal = this.diagonalWinner(player, row, col);
+  if (diagonal != Player.Nobody) return diagonal;
+
+  return Player.Nobody;
+}
+
 
   private verticalWinner(player: Player, r: number): Player {
     const col = this.getCol(r);
